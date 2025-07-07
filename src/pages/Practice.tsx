@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -80,12 +79,18 @@ const Practice = () => {
   };
 
   useEffect(() => {
+    // Si no hay ID, redirigir a mis exámenes
+    if (!id) {
+      navigate("/exams");
+      return;
+    }
+
     const timer = setInterval(() => {
       setTimeSpent(Math.floor((Date.now() - startTime) / 1000));
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [startTime]);
+  }, [id, navigate, startTime]);
 
   const handleAnswerSelect = (option: string) => {
     setSelectedAnswers(prev => ({
@@ -129,6 +134,19 @@ const Practice = () => {
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
+
+  // Si no hay ID, mostrar mensaje de carga mientras redirige
+  if (!id) {
+    return (
+      <div className="p-6 max-w-4xl mx-auto">
+        <Card className="bg-white">
+          <CardContent className="p-8 text-center">
+            <p className="text-gray-600">Redirigiendo...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   if (showResults) {
     const { correctAnswers, percentage, wrongAnswers } = calculateResults();
