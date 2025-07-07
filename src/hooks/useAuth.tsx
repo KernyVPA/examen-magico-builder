@@ -28,6 +28,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
       setUser(JSON.parse(savedUser));
+    } else {
+      // Simular usuario logueado por defecto
+      const defaultUser: User = {
+        id: '1',
+        name: 'Usuario Demo',
+        email: 'usuario@ejemplo.com',
+        avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=demo'
+      };
+      setUser(defaultUser);
+      localStorage.setItem('user', JSON.stringify(defaultUser));
     }
     setLoading(false);
   }, []);
