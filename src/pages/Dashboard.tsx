@@ -1,117 +1,172 @@
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import { Plus, Upload, Play, BookOpen, TrendingUp, Clock } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { LoginModal } from "@/components/LoginModal";
+import { useAuth } from "@/hooks/useAuth";
 
-const Dashboard = () => {
-  const stats = [
-    { label: "Exámenes creados", value: "12", icon: BookOpen, color: "text-blue-600" },
-    { label: "Preguntas generadas", value: "248", icon: Plus, color: "text-green-600" },
-    { label: "Prácticas realizadas", value: "34", icon: Play, color: "text-purple-600" },
-    { label: "Tiempo de estudio", value: "15h", icon: Clock, color: "text-orange-600" },
-  ];
+export default function Dashboard() {
+  const { user } = useAuth();
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
-  const recentExams = [
-    { id: 1, name: "Historia de España", questions: 25, date: "Hace 2 días" },
-    { id: 2, name: "Matemáticas Básicas", questions: 30, date: "Hace 4 días" },
-    { id: 3, name: "Biología Celular", questions: 20, date: "Hace 1 semana" },
-  ];
+  const handleActionClick = (action: string) => {
+    if (!user) {
+      setShowLoginModal(true);
+      return;
+    }
+    // Aquí iría la navegación normal
+    console.log(`Navegando a: ${action}`);
+  };
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
-        <h1 className="text-3xl font-bold mb-2">¡Bienvenido a Exam Maker!</h1>
-        <p className="text-blue-100 text-lg">Crea, practica y domina tus exámenes con inteligencia artificial</p>
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold text-gray-800">
+          {user ? `¡Hola, ${user.name}!` : "¡Bienvenido a Exam Maker!"}
+        </h1>
+        <p className="text-gray-600">
+          {user 
+            ? "Gestiona tus exámenes y mejora tu aprendizaje con IA"
+            : "Crea, practica y domina tus exámenes con inteligencia artificial"
+          }
+        </p>
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Link to="/generate">
-          <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer border-2 hover:border-blue-300 bg-gradient-to-br from-blue-50 to-blue-100">
-            <CardHeader className="text-center">
-              <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Plus className="w-8 h-8 text-white" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-600 rounded-lg">
+                <Plus className="h-6 w-6 text-white" />
               </div>
-              <CardTitle className="text-blue-700">Generar examen IA</CardTitle>
-              <CardDescription>Sube un documento y genera preguntas automáticamente</CardDescription>
-            </CardHeader>
-          </Card>
-        </Link>
+              <div>
+                <CardTitle className="text-lg text-blue-800">Generar examen IA</CardTitle>
+                <CardDescription className="text-blue-600">
+                  Crea preguntas automáticamente desde PDFs
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Button 
+              className="w-full bg-blue-600 hover:bg-blue-700"
+              onClick={() => handleActionClick('/generate')}
+            >
+              Comenzar ahora
+            </Button>
+          </CardContent>
+        </Card>
 
-        <Link to="/upload-aiken">
-          <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer border-2 hover:border-green-300 bg-gradient-to-br from-green-50 to-green-100">
-            <CardHeader className="text-center">
-              <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Upload className="w-8 h-8 text-white" />
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-green-200 bg-gradient-to-br from-green-50 to-green-100">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-green-600 rounded-lg">
+                <Upload className="h-6 w-6 text-white" />
               </div>
-              <CardTitle className="text-green-700">Subir examen Aiken</CardTitle>
-              <CardDescription>Importa preguntas desde un archivo de texto</CardDescription>
-            </CardHeader>
-          </Card>
-        </Link>
+              <div>
+                <CardTitle className="text-lg text-green-800">Subir examen Aiken</CardTitle>
+                <CardDescription className="text-green-600">
+                  Importa tus exámenes en formato Aiken
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Button 
+              className="w-full bg-green-600 hover:bg-green-700"
+              onClick={() => handleActionClick('/upload-aiken')}
+            >
+              Subir archivo
+            </Button>
+          </CardContent>
+        </Card>
 
-        <Link to="/practice/last">
-          <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer border-2 hover:border-purple-300 bg-gradient-to-br from-purple-50 to-purple-100">
-            <CardHeader className="text-center">
-              <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Play className="w-8 h-8 text-white" />
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-purple-200 bg-gradient-to-br from-purple-50 to-purple-100">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-purple-600 rounded-lg">
+                <Play className="h-6 w-6 text-white" />
               </div>
-              <CardTitle className="text-purple-700">Practicar último examen</CardTitle>
-              <CardDescription>Continúa donde lo dejaste</CardDescription>
-            </CardHeader>
-          </Card>
-        </Link>
+              <div>
+                <CardTitle className="text-lg text-purple-800">Practicar último</CardTitle>
+                <CardDescription className="text-purple-600">
+                  Continúa con tu último examen
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Button 
+              className="w-full bg-purple-600 hover:bg-purple-700"
+              onClick={() => handleActionClick('/practice')}
+            >
+              Practicar ahora
+            </Button>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        {stats.map((stat, index) => (
-          <Card key={index} className="bg-white">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
-                  <p className="text-3xl font-bold text-gray-800">{stat.value}</p>
-                </div>
-                <stat.icon className={`w-8 h-8 ${stat.color}`} />
-              </div>
+      {/* Stats Cards */}
+      {user && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <Card className="border-gray-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
+                Total de exámenes
+              </CardTitle>
+              <BookOpen className="h-4 w-4 text-blue-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-800">12</div>
+              <p className="text-xs text-gray-500">+2 desde el mes pasado</p>
             </CardContent>
           </Card>
-        ))}
-      </div>
 
-      {/* Recent Exams */}
-      <Card className="bg-white">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-blue-600" />
-            Exámenes recientes
-          </CardTitle>
-          <CardDescription>Tus últimos exámenes creados</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {recentExams.map((exam) => (
-              <div key={exam.id} className="flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
-                <div>
-                  <h3 className="font-medium text-gray-800">{exam.name}</h3>
-                  <p className="text-sm text-gray-500">{exam.questions} preguntas • {exam.date}</p>
-                </div>
-                <Link to={`/practice/${exam.id}`}>
-                  <Button variant="outline" size="sm">
-                    <Play className="w-4 h-4 mr-2" />
-                    Practicar
-                  </Button>
-                </Link>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+          <Card className="border-gray-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
+                Promedio de calificación
+              </CardTitle>
+              <TrendingUp className="h-4 w-4 text-green-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-800">87%</div>
+              <p className="text-xs text-green-600">+5% desde la semana pasada</p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-gray-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
+                Tiempo de estudio
+              </CardTitle>
+              <Clock className="h-4 w-4 text-purple-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-800">24h</div>
+              <p className="text-xs text-gray-500">Esta semana</p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-gray-200">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600">
+                Flash-cards activas
+              </CardTitle>
+              <BookOpen className="h-4 w-4 text-orange-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-800">156</div>
+              <p className="text-xs text-gray-500">En 3 mazos</p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      <LoginModal open={showLoginModal} onOpenChange={setShowLoginModal} />
     </div>
   );
-};
-
-export default Dashboard;
+}
